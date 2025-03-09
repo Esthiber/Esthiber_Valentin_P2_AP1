@@ -1,0 +1,36 @@
+﻿@page "/model/create"
+@rendermode InteractiveServer
+
+<PageTitle>Create</PageTitle>
+
+<EditForm Model="model">
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Crear </h5>
+            </div>
+            <div class="card-body">
+                @*Id*@
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>IngresoId</strong></label>
+                        <InputNumber class="form-control" @bind-Value="model.id" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center mt-2">
+                <a href="/models" class="btn btn-secondary">
+                    <span class="btn btn-secondary bi-arrow-left"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+            </div>
+
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    Model model { get; set; }
+}
