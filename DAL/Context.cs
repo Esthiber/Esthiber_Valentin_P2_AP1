@@ -6,7 +6,10 @@ namespace Esthiber_Valentin_P2_AP1.DAL
 {
     public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        DbSet<Ciudades> Ciudades { get; set; }
+        public virtual DbSet<Ciudades> Ciudades { get; set; }
+        public virtual DbSet<Encuestas> Encuestas { get; set; }
+        public virtual DbSet<DetailsEncuestasCiudades> DetailsEncuestas { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Ciudades>()
