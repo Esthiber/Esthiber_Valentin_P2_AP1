@@ -1,10 +1,15 @@
 using Esthiber_Valentin_P2_AP1.Components;
+using Esthiber_Valentin_P2_AP1.DAL;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContextFactory<Context>(o => o.UseSqlServer(ConStr));
 
 var app = builder.Build();
 
