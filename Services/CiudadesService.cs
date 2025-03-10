@@ -14,7 +14,7 @@ namespace Esthiber_Valentin_P2_AP1.Services
         public async Task<bool> UpdateMonto(int id, double monto, TipoOperacion tipoOperacion)
         {
             await using var context = await Dbfactory.CreateDbContextAsync();
-            var ciudad = await context.Ciudades.FirstOrDefaultAsync(c => c.CiudadeId == id) ?? new();
+            var ciudad = await context.Ciudades.FirstOrDefaultAsync(c => c.CiudadId == id) ?? new();
 
             if (tipoOperacion == TipoOperacion.Sumar)
                 ciudad.Monto += monto;

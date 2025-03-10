@@ -16,9 +16,9 @@ namespace Esthiber_Valentin_P2_AP1.DAL
                 .HasData(
                     new List<Ciudades>()
                     {
-                        new(){CiudadesId = 1,Nombre="Puerto Plata",            Monto=0},
-                        new(){CiudadesId = 2,Nombre="San Francisco de Macoris",Monto=0},
-                        new(){CiudadesId = 3,Nombre="Cotui",                   Monto=0}
+                        new(){CiudadId = 1,Nombre="Puerto Plata",            Monto=0},
+                        new(){CiudadId = 2,Nombre="San Francisco de Macoris",Monto=0},
+                        new(){CiudadId = 3,Nombre="Cotui",                   Monto=0}
                     }
                 );
             base.OnModelCreating(modelBuilder);
