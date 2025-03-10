@@ -14,17 +14,17 @@ namespace Esthiber_Valentin_P2_AP1.Services
         public async Task<bool> UpdateMonto(int id, double monto, TipoOperacion tipoOperacion)
         {
             await using var context = await Dbfactory.CreateDbContextAsync();
-            if (tipoOperacion == TipoOperacion.Sumar)
-            {
+            var ciudad = await context.Ciudades.FirstOrDefaultAsync(c => c.CiudadeId == id) ?? new();
 
-            }
+            if (tipoOperacion == TipoOperacion.Sumar)
+                ciudad.Monto += monto;
 
             if (tipoOperacion == TipoOperacion.Restar)
-            {
+                ciudad.Monto -= monto;
 
-            }
+            context.Ciudades.Update(ciudad);
 
-            return false;
+            return await context.SaveChangesAsync() > 0;
         }
     }
 }
