@@ -40,12 +40,20 @@ namespace Esthiber_Valentin_P2_AP1.Services
                 .Where(e => e.EncuestaId == id)
                 .ExecuteDeleteAsync() > 0;
         }
+        
         public async Task<bool> Existe(int id)
         {
             await using var context = await Dbfactory.CreateDbContextAsync();
             return await context.Encuestas.AnyAsync(e => e.EncuestaId == id);
         }
 
+
+        public async Task<Encuestas> Buscar(int id)
+        {
+            await using var context = await Dbfactory.CreateDbContextAsync();
+            return await context.Encuestas
+                .FirstOrDefaultAsync(e => e.EncuestaId == id) ?? null!;
+        }
         public async Task<List<Encuestas>> Listar(Expression<Func<Encuestas, bool>> criterio)
         {
             await using var context = await Dbfactory.CreateDbContextAsync();
