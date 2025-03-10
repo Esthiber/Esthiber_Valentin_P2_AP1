@@ -10,5 +10,10 @@ namespace Esthiber_Valentin_P2_AP1.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nombre de la asignatura requerido.")]
         public string Asignatura { get; set; }
 
+        [Required(ErrorMessage = "La Fecha es requerida.")]
+        public DateTime Fecha { get; set; }
+
+        public virtual ICollection<DetailsEncuestasCiudades> DetailEncuestas { get; set; }
+
     }
 }
