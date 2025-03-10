@@ -1,22 +1,50 @@
 ﻿@page "/model/create"
 @rendermode InteractiveServer
+@inject NavigationManager navigationManager
 
 <PageTitle>Create</PageTitle>
 
-<EditForm Model="model">
-
+<EditForm Model="model" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header text-center">
                 <h5 class="card-title">Crear </h5>
             </div>
             <div class="card-body">
-                @*Id*@
-                <div class="mb-3">
-                    <div class="mb-3">
-                        <label class="form-label"><strong>IngresoId</strong></label>
+
+                <div class="mb-3 row">
+                    @*Id*@
+                    <div class="mb-3 col-5">
+                        <label class="form-label"><strong>Id</strong></label>
                         <InputNumber class="form-control" @bind-Value="model.id" readonly />
                     </div>
+                    @*Fecha*@
+                    <div class="mb-3 col-3">
+                        <label class="form-label"><strong>Fecha</strong></label>
+                        <InputDate @bind-Value="date" class="form-control"></InputDate>
+                    </div>
+                </div>
+
+
+                @*Detalles*@
+                <div class="border border-success p-3 mt-3">
+                    <h5>Detalle</h5>
+                    <hr />
+                    <table class="table table-light">
+                        <thead class="table table-striped">
+                            <tr class="text-center">
+                                <th>Id</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr>
+                                0
+                            </tr>
+                        </tbody>
+
+                        <tfoot></tfoot>
+                    </table>
                 </div>
             </div>
             <div class="card-footer text-center mt-2">
@@ -32,5 +60,8 @@
 </EditForm>
 
 @code {
-    Model model { get; set; }
+    Model model { get; set; } = new();
+    DateTime date { get; set; }
+
+    private async Task Guardar() { }
 }
