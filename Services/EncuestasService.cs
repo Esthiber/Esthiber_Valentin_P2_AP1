@@ -49,7 +49,9 @@ namespace Esthiber_Valentin_P2_AP1.Services
         public async Task<List<Encuestas>> Listar(Expression<Func<Encuestas, bool>> criterio)
         {
             await using var context = await Dbfactory.CreateDbContextAsync();
-            return new();
+            return await context.Encuestas
+                .Where(criterio)
+                .ToListAsync();
         }
     }
 }
