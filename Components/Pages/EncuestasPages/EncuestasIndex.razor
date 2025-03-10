@@ -1,13 +1,14 @@
-﻿@page "/model"
+﻿@page "/encuestas"
 @rendermode InteractiveServer
+@inject EncuestasService encuestasService
 
-<PageTitle>Modelo</PageTitle>
+<PageTitle>Encuestas</PageTitle>
 
 <div class="container">
     <div class="card shadow-lg">
         <div class="card-header space-between">
             <h5 class="card-title text-center">Modelo</h5>
-            <a href="/model/create" class="btn btn-primary"> <span class="bi bi-plus-square bi-trask mt-3"></span> Crear</a>
+            <a href="/encuestas/create" class="btn btn-primary"> <span class="bi bi-plus-square bi-trask mt-3"></span> Crear</a>
         </div>
 
         <div class="card-body">
@@ -32,6 +33,7 @@
                     <InputSelect class="form-select" @bind-Value="Filtro">
                         <option value="" selected disabled>Elija una opci&oacute;n</option>
                         <option value="Id">Id</option>
+                        <option value="Asignatura">Asignatura</option>
                     </InputSelect>
                 </div>
             </div>
@@ -47,15 +49,21 @@
                     <tr>
 
                         <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Asignatura</th>
+                        <th>Monto</th>
                         <th colspan="2" class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var i in new List<int>())
+                    @foreach (var encuesta in ListaEncuestas)
                     {
                         <tr>
                             @*Detalle*@
-                            <td> @i</td>
+                            <td> @encuesta.EncuestaId</td>
+                            <td> @encuesta.Fecha.ToShortDateString()</td>
+                            <td> @encuesta.Asignatura</td>
+                            <td> @encuesta.DetailsEncuestas.Sum(d => d.Monto)</td>
 
 
                             @*BTN Editar*@
@@ -74,7 +82,13 @@
         </div>
 
         <div class="card-footer">
-            <label>Count: 0</label>
+            <div class="row align-items-center">
+                <label class="col-4">Count:@ListaEncuestas.Count()</label>
+                <label class="col-3">
+                    @totalEncuestas
+                </label>
+            </div>
+
         </div>
     </div>
 </div>
@@ -82,6 +96,24 @@
 @code {
     public string Filtro { get; set; }
     public string ValorFiltro { get; set; }
+    public double totalEncuestas { get; set; }
+
+    public List<Encuestas> ListaEncuestas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEncuestas = await encuestasService.Listar(e => true);
+        await UpdateTotal();
+    }
+
+    public async Task UpdateTotal()
+    {
+        foreach (var e in ListaEncuestas)
+        {
+            totalEncuestas += e.DetailsEncuestas.Sum(d => d.Monto);
+        }
+
+    }
 
     void Buscar()
     {
