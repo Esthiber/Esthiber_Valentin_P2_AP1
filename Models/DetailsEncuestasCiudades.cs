@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esthiber_Valentin_P2_AP1.Models
 {
@@ -11,8 +12,11 @@ namespace Esthiber_Valentin_P2_AP1.Models
 
         public int CuidadId { get; set; }
 
+        [ForeignKey("EncuestaId")]
+        [InverseProperty("DetailsEncuestas")]
         public virtual Encuestas Encuesta { get; set; } = null!;
 
+        [ForeignKey("CiudadId")]
         public virtual Ciudades Ciudad { get; set; } = null!;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esthiber_Valentin_P2_AP1.Models
 {
@@ -13,7 +14,8 @@ namespace Esthiber_Valentin_P2_AP1.Models
         [Required(ErrorMessage = "La Fecha es requerida.")]
         public DateTime Fecha { get; set; }
 
-        public virtual ICollection<DetailsEncuestasCiudades> DetailEncuestas { get; set; }
+        [InverseProperty("Encuesta")]
+        public virtual ICollection<DetailsEncuestasCiudades> DetailsEncuestas { get; set; }
 
     }
 }
