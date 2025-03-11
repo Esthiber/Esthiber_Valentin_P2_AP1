@@ -16,6 +16,5 @@ namespace Esthiber_Valentin_P2_AP1.Models
 
         [InverseProperty("Encuesta")]
         public virtual ICollection<DetailsEncuestasCiudades> DetailsEncuestas { get; set; }
-
     }
 }
