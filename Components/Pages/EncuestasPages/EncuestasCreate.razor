@@ -1,0 +1,163 @@
+﻿@page "/encuestas/create"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject CiudadesService ciudadesService
+@inject EncuestasService encuestasService
+@inject DetailsEncuestasService detailsService
+
+<PageTitle>Create</PageTitle>
+
+<EditForm Model="encuesta" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Crear </h5>
+            </div>
+            <div class="card-body">
+
+                <div class="mb-3 row">
+                    @*Id*@
+                    <div class="mb-3 col-5">
+                        <label class="form-label"><strong>Id</strong></label>
+                        <InputNumber class="form-control" @bind-Value="encuesta.EncuestaId" readonly />
+                    </div>
+                    @*Fecha*@
+                    <div class="mb-3 col-3">
+                        <label class="form-label"><strong>Fecha</strong></label>
+                        <InputDate @bind-Value="encuesta.Fecha" class="form-control"></InputDate>
+                        <ValidationMessage For="(()=>encuesta.Fecha)"></ValidationMessage>
+
+                    </div>
+                </div>
+
+                @*Asignatura*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Asignatura</strong></label>
+                    <InputText class="form-control" @bind-Value="encuesta.Asignatura"></InputText>
+                    <ValidationMessage For="(()=>encuesta.Asignatura)"></ValidationMessage>
+                </div>
+
+
+                @*Detalles*@
+                <div class="border border-success p-3 mt-3">
+                    <h5>Detalle</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Ciudad</label>
+                            <InputSelect class="form-control" @bind-Value="details.CiudadId">
+                                <option value="0" selected disabled>Seleccione una ciudad</option>
+                                @foreach (var c in ListaCiudades)
+                                {
+                                    <option value="@c.CiudadId">@c.Nombre</option>
+
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="(()=>details.CiudadId)"></ValidationMessage>
+
+                        </div>
+
+                        <div class="col-4">
+                            <label>Monto de la cuenta</label>
+                            <InputNumber class="form-control" @bind-value="details.Monto"></InputNumber>
+                            <ValidationMessage For="(()=>details.Monto)"></ValidationMessage>
+
+                        </div>
+                        <button class="btn btn-primary col-1" @onclick="AddDetail"><i class="bi bi-plus"></i></button>
+
+                    </div>
+                    <hr />
+                    <table class="table table-light">
+                        <thead class="table table-striped">
+                            <tr class="text-center">
+                                <th>Ciudad</th>
+                                <th>Monto</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="text-center">
+                            @foreach (var d in ListaDetails)
+                            {
+                                <tr>
+                                    <td>@d.Ciudad.Nombre</td>
+                                    <td>@d.Monto</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-danger bi bi-trash" @onclick="() => {RemoveDetail(d);}"></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-center mt-2">
+                <a href="/encuestas" class="btn btn-secondary">
+                    <span class="btn btn-secondary bi-arrow-left"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+            </div>
+
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    Encuestas encuesta { get; set; } = new();
+    public List<DetailsEncuestasCiudades> ListaDetails { get; set; } = new();
+    public List<Ciudades> ListaCiudades { get; set; } = new();
+    public DetailsEncuestasCiudades details { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        encuesta.Fecha = DateTime.Now;
+        ListaDetails = new();
+        ListaCiudades = await ciudadesService.Listar(c => true);
+    }
+
+    private async Task Guardar()
+    {
+        await encuestasService.Guardar(encuesta);
+        encuesta = await encuestasService.Last();
+    }
+
+    public async Task LoadDetails()
+    {
+        ListaDetails = await detailsService.Listar(d => d.EncuestaId == encuesta.EncuestaId);
+    }
+
+    public async Task AddDetail()
+    {
+        if (encuesta.EncuestaId == 0)
+        {
+            await Guardar();
+            if (encuesta.EncuestaId != 0)
+            {
+                details.EncuestaId = encuesta.EncuestaId;
+                await detailsService.Insertar(details);
+                details = new();
+                await LoadDetails();
+            }
+        }
+        else if (encuesta.EncuestaId != 0)
+        {
+            details.EncuestaId = encuesta.EncuestaId;
+            await detailsService.Insertar(details);
+            details = new();
+            await LoadDetails();
+        }
+
+    }
+
+    public async Task RemoveDetail(DetailsEncuestasCiudades d)
+    {
+        details = new();
+        details.CiudadId = d.CiudadId;
+        details.Monto = d.Monto;
+        await detailsService.Eliminar(d.DetailsEncuestasCiudadesId);
+    }
+}
+

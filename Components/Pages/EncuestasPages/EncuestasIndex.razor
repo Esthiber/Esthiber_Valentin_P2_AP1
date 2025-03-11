@@ -1,0 +1,129 @@
+﻿@page "/encuestas"
+@rendermode InteractiveServer
+@inject EncuestasService encuestasService
+
+<PageTitle>Encuestas</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header space-between">
+            <h5 class="card-title text-center">Registro Asignaturas</h5>
+            <a href="/encuestas/create" class="btn btn-primary"> <span class="bi bi-plus-square bi-trask mt-3"></span> Crear</a>
+        </div>
+
+        <div class="card-body">
+            @*labels*@
+            <div class="row">
+
+                @*Filtrar por*@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtrar por</strong></label>
+                </div>
+
+                @*ValorFiltro*@
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
+                </div>
+            </div>
+
+            @*Inputs y botones*@
+            <div class="row align-items-center">
+                @*filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="Id">Id</option>
+                        <option value="Asignatura">Asignatura</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"> Search</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <table class="table table-striped table-hover">
+                <thead class="table text-black">
+                    <tr>
+
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Asignatura</th>
+                        <th>Monto</th>
+                        <th colspan="2" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var encuesta in ListaEncuestas)
+                    {
+                        <tr>
+                            @*Detalle*@
+                            <td> @encuesta.EncuestaId</td>
+                            <td> @encuesta.Fecha.ToShortDateString()</td>
+                            <td> @encuesta.Asignatura</td>
+                            <td> @encuesta.DetailsEncuestas.Sum(d => d.Monto)</td>
+
+
+                            @*BTN Editar*@
+                            <td class="text-center">
+                                <a href="/encuestas/edit/@encuesta.EncuestaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                            </td>
+
+                            @*BTN Eliminar*@
+                            <td class="text-center">
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => {eliminar(encuesta.EncuestaId);}"></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            <div class="row align-items-center">
+                <label class="col-4 border border-1">Count:@ListaEncuestas.Count()</label>
+                <label class="col-3 border border-1">
+                    Total: @totalEncuestas
+                </label>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    public string Filtro { get; set; }
+    public string ValorFiltro { get; set; }
+    public double totalEncuestas { get; set; }
+
+    public List<Encuestas> ListaEncuestas { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEncuestas = await encuestasService.Listar(e => true) ?? new();
+        await UpdateTotal();
+    }
+
+    public async Task UpdateTotal()
+    {
+        foreach (var e in ListaEncuestas)
+        {
+            totalEncuestas += e.DetailsEncuestas.Sum(d => d.Monto);
+        }
+
+    }
+
+    public async Task eliminar(int id)
+    {
+        await encuestasService.Eliminar(id);
+        ListaEncuestas = await encuestasService.Listar(e => true) ?? new();
+    }
+
+    void Buscar()
+    {
+
+    }
+}
