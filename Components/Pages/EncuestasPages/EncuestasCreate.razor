@@ -77,8 +77,11 @@
                             @foreach (var d in ListaDetails)
                             {
                                 <tr>
-                                    <th>@d.Ciudad.Nombre</th>
-                                    <th>@d.Monto</th>
+                                    <td>@d.Ciudad.Nombre</td>
+                                    <td>@d.Monto</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-danger bi bi-trash" @onclick="() => {RemoveDetail(d);}"></button>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -145,4 +148,13 @@
         }
 
     }
+
+    public async Task RemoveDetail(DetailsEncuestasCiudades d)
+    {
+        details = new();
+        details.CuidadId = d.CuidadId;
+        details.Monto = d.Monto;
+        await detailsService.Eliminar(d.DetailsEncuestasCiudadesId);
+    }
 }
+
