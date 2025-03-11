@@ -20,7 +20,7 @@ namespace Esthiber_Valentin_P2_AP1.Models
         [InverseProperty("DetailsEncuestas")]
         public virtual Encuestas Encuesta { get; set; } = null!;
 
-        [ForeignKey("CiudadId")]
+        [ForeignKey("CuidadId")]
         public virtual Ciudades Ciudad { get; set; } = null!;
     }
 }

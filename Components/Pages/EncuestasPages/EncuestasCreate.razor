@@ -3,6 +3,7 @@
 @inject NavigationManager navigationManager
 @inject CiudadesService ciudadesService
 @inject EncuestasService encuestasService
+@inject DetailsEncuestasService detailsService
 
 <PageTitle>Create</PageTitle>
 
@@ -42,7 +43,8 @@
                 <div class="border border-success p-3 mt-3">
                     <h5>Detalle</h5>
                     <div class="row">
-                        <div>
+                        <div class="col-4">
+                            <label>Ciudad</label>
                             <InputSelect class="form-control" @bind-Value="details.CuidadId">
                                 <option value="0" selected disabled>Seleccione una ciudad</option>
                                 @foreach (var c in ListaCiudades)
@@ -52,6 +54,14 @@
                                 }
                             </InputSelect>
                         </div>
+
+                        <div class="col-4">
+                            <label>Monto de la cuenta</label>
+                            <InputNumber class="form-control" @bind-value="details.Monto"></InputNumber>
+
+                        </div>
+                        <button class="btn btn-primary col-1" @onclick="AddDetail"><i class="bi bi-plus"></i></button>
+
                     </div>
                     <hr />
                     <table class="table table-light">
@@ -64,7 +74,7 @@
                         </thead>
 
                         <tbody class="text-center">
-                            @foreach (DetailsEncuestasCiudades d in ListaDetails)
+                            @foreach (var d in ListaDetails)
                             {
                                 <tr>
                                     <th>@d.Ciudad.Nombre</th>
@@ -78,7 +88,7 @@
                 </div>
             </div>
             <div class="card-footer text-center mt-2">
-                <a href="/models" class="btn btn-secondary">
+                <a href="/encuestas" class="btn btn-secondary">
                     <span class="btn btn-secondary bi-arrow-left"></span> Volver
                 </a>
                 <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
@@ -90,7 +100,6 @@
 </EditForm>
 
 @code {
-    Model model { get; set; } = new();
     Encuestas encuesta { get; set; } = new();
     public List<DetailsEncuestasCiudades> ListaDetails { get; set; } = new();
     public List<Ciudades> ListaCiudades { get; set; } = new();
@@ -99,8 +108,41 @@
     protected override async Task OnInitializedAsync()
     {
         encuesta.Fecha = DateTime.Now;
+        ListaDetails = new();
         ListaCiudades = await ciudadesService.Listar(c => true);
     }
 
-    private async Task Guardar() { }
+    private async Task Guardar()
+    {
+        await encuestasService.Guardar(encuesta);
+        encuesta = await encuestasService.Last();
+    }
+
+    public async Task LoadDetails()
+    {
+        ListaDetails = await detailsService.Listar(d => d.EncuestaId == encuesta.EncuestaId);
+    }
+
+    public async Task AddDetail()
+    {
+        if (encuesta.EncuestaId == 0)
+        {
+            await Guardar();
+            if (encuesta.EncuestaId != 0)
+            {
+                details.EncuestaId = encuesta.EncuestaId;
+                await detailsService.Insertar(details);
+                details = new();
+                await LoadDetails();
+            }
+        }
+        else if (encuesta.EncuestaId != 0)
+        {
+            details.EncuestaId = encuesta.EncuestaId;
+            await detailsService.Insertar(details);
+            details = new();
+            await LoadDetails();
+        }
+
+    }
 }

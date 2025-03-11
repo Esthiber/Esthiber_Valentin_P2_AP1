@@ -63,5 +63,15 @@ namespace Esthiber_Valentin_P2_AP1.Services
                 .Where(criterio)
                 .ToListAsync();
         }
+
+        public async Task<Encuestas> Last()
+        {
+            await using var context = await Dbfactory.CreateDbContextAsync();
+            return await context.Encuestas
+                .Include(e => e.DetailsEncuestas)
+                .OrderBy(e => e.EncuestaId)
+                .LastOrDefaultAsync() ?? null!;
+        }
+
     }
 }

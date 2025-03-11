@@ -74,7 +74,7 @@
 
                             @*BTN Eliminar*@
                             <td class="text-center">
-                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => {}"></button>
+                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => {eliminar(encuesta.EncuestaId);}"></button>
                             </td>
                         </tr>
                     }
@@ -114,6 +114,12 @@
             totalEncuestas += e.DetailsEncuestas.Sum(d => d.Monto);
         }
 
+    }
+
+    public async Task eliminar(int id)
+    {
+        await encuestasService.Eliminar(id);
+        ListaEncuestas = await encuestasService.Listar(e => true) ?? new();
     }
 
     void Buscar()
