@@ -1,10 +1,12 @@
-﻿@page "/model/create"
+﻿@page "/encuestas/create"
 @rendermode InteractiveServer
 @inject NavigationManager navigationManager
+@inject CiudadesService ciudadesService
+@inject EncuestasService encuestasService
 
 <PageTitle>Create</PageTitle>
 
-<EditForm Model="model" OnValidSubmit="Guardar">
+<EditForm Model="encuesta" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow-lg">
@@ -17,31 +19,58 @@
                     @*Id*@
                     <div class="mb-3 col-5">
                         <label class="form-label"><strong>Id</strong></label>
-                        <InputNumber class="form-control" @bind-Value="model.id" readonly />
+                        <InputNumber class="form-control" @bind-Value="encuesta.EncuestaId" readonly />
                     </div>
                     @*Fecha*@
                     <div class="mb-3 col-3">
                         <label class="form-label"><strong>Fecha</strong></label>
-                        <InputDate @bind-Value="date" class="form-control"></InputDate>
+                        <InputDate @bind-Value="encuesta.Fecha" class="form-control"></InputDate>
+                        <ValidationMessage For="(()=>encuesta.Fecha)"></ValidationMessage>
+
                     </div>
+                </div>
+
+                @*Asignatura*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Asignatura</strong></label>
+                    <InputText class="form-control" @bind-Value="encuesta.Asignatura"></InputText>
+                    <ValidationMessage For="(()=>encuesta.Asignatura)"></ValidationMessage>
                 </div>
 
 
                 @*Detalles*@
                 <div class="border border-success p-3 mt-3">
                     <h5>Detalle</h5>
+                    <div class="row">
+                        <div>
+                            <InputSelect class="form-control" @bind-Value="details.CuidadId">
+                                <option value="0" selected disabled>Seleccione una ciudad</option>
+                                @foreach (var c in ListaCiudades)
+                                {
+                                    <option value="@c.CiudadId">@c.Nombre</option>
+
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
                     <hr />
                     <table class="table table-light">
                         <thead class="table table-striped">
                             <tr class="text-center">
-                                <th>Id</th>
+                                <th>Ciudad</th>
+                                <th>Monto</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
 
                         <tbody class="text-center">
-                            <tr>
-                                <th>0</th>
-                            </tr>
+                            @foreach (DetailsEncuestasCiudades d in ListaDetails)
+                            {
+                                <tr>
+                                    <th>@d.Ciudad.Nombre</th>
+                                    <th>@d.Monto</th>
+                                </tr>
+                            }
                         </tbody>
 
                         <tfoot></tfoot>
@@ -62,7 +91,16 @@
 
 @code {
     Model model { get; set; } = new();
-    DateTime date { get; set; }
+    Encuestas encuesta { get; set; } = new();
+    public List<DetailsEncuestasCiudades> ListaDetails { get; set; } = new();
+    public List<Ciudades> ListaCiudades { get; set; } = new();
+    public DetailsEncuestasCiudades details { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        encuesta.Fecha = DateTime.Now;
+        ListaCiudades = await ciudadesService.Listar(c => true);
+    }
 
     private async Task Guardar() { }
 }
