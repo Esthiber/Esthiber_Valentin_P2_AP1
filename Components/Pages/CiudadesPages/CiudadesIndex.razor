@@ -1,0 +1,61 @@
+﻿@page "/ciudades"
+@rendermode InteractiveServer
+@inject CiudadesService ciudadesService
+
+<PageTitle>Modelo</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header space-between">
+            <h5 class="card-title text-center">Ciudades</h5>
+            @* <a href="/model/create" class="btn btn-primary"> <span class="bi bi-plus-square bi-trask mt-3"></span> Crear</a> *@
+        </div>
+
+        <div class="card-body">
+
+
+            <table class="table table-striped table-hover">
+                <thead class="table text-black">
+                    <tr>
+
+                        <th>Id</th>
+                        <th colspan="2" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in ListaCiudades)
+                    {
+                        <tr>
+                            @*Detalle*@
+                            <td> @c.CiudadId</td>
+                            <td> @c.Nombre</td>
+                            <td> @c.Monto</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            <label>Count: @ListaCiudades.Count || Monto total: @ListaCiudades.Sum(c => c.Monto)</label>
+        </div>
+    </div>
+</div>
+
+@code {
+    public string Filtro { get; set; }
+    public string ValorFiltro { get; set; }
+
+    public List<Ciudades> ListaCiudades { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCiudades = await ciudadesService.Listar(c => true);
+    }
+
+    void Buscar()
+    {
+
+    }
+}
